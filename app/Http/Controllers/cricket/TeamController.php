@@ -20,7 +20,7 @@ class TeamController extends Controller
 
 
 
-        return response()->json([
+        return json_encode([
             'success' => false,
             'message' => 'Teams',
             'data' => $team

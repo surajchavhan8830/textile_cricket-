@@ -38,7 +38,7 @@ class MatchInformationController extends Controller
 
 
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Match information',
             'data' => $matchinfo,
@@ -125,7 +125,7 @@ class MatchInformationController extends Controller
     {
         $match_status = Sechedule::all();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'status',
             'data' => $match_status
@@ -195,7 +195,7 @@ class MatchInformationController extends Controller
         $matchinfo->runing_over = 0;
         $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'message' => 'Players Added',
             'success' => true
         ]);
@@ -459,7 +459,7 @@ class MatchInformationController extends Controller
         // }
 
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'is_new_over' => $is_new_over,
             'message' => 'Ball Added'
@@ -513,7 +513,7 @@ class MatchInformationController extends Controller
         // $matchinfo->sticker_player_id  = $request->player_id;
         // $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Player Added'
         ]);
@@ -542,7 +542,7 @@ class MatchInformationController extends Controller
         }
 
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'New Bowler Added'
         ]);
@@ -557,7 +557,7 @@ class MatchInformationController extends Controller
         $matchinfo->break_type = $request->break_type;
         $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => "Break Time!"
         ]);
@@ -581,7 +581,7 @@ class MatchInformationController extends Controller
         $matchinfo->inning_id = 1;
         $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => $team->team_name . ' Wins toss, ' . 'elects to ' . $request->toss_elected
         ]);
@@ -601,7 +601,7 @@ class MatchInformationController extends Controller
         $matchinfo->runing_over = 0.0;
         $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => '1st inning is finished'
         ]);
@@ -619,7 +619,7 @@ class MatchInformationController extends Controller
         $matchinfo->runing_over = 0.0;
         $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => '2nd inning is finished'
         ]);
@@ -700,7 +700,7 @@ class MatchInformationController extends Controller
 
         $matchinfo->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => $matchinfo ? 'Success' : 'Match not found',
             'result' => $result
@@ -1085,7 +1085,7 @@ class MatchInformationController extends Controller
         /* ------------------------------------------ */
 
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Match information',
             'data' => $matchinfo,
@@ -1170,7 +1170,7 @@ class MatchInformationController extends Controller
 
 
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Match information',
             'data' => $matchinfo,
@@ -1279,7 +1279,7 @@ class MatchInformationController extends Controller
         $first_team = Team::find($first_team_id);
         $second_team = Team::find($second_team_id);
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Ball by Ball Overs',
             'data' => $over_list,
@@ -1309,7 +1309,7 @@ class MatchInformationController extends Controller
 
 
 
-        return response()->json([
+        return json_encode([
             'message' => 'team player list',
             'data' => $player
         ]);
@@ -1332,7 +1332,7 @@ class MatchInformationController extends Controller
             ->where('is_extra', 1)
             ->select('player_id')->get()->toArray();
 
-        return response()->json([
+        return json_encode([
             'message' => 'team player list',
             'data' => $player
         ]);
@@ -1348,7 +1348,7 @@ class MatchInformationController extends Controller
         ];
 
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => "Group List",
             'data' => $groups
@@ -1426,7 +1426,7 @@ class MatchInformationController extends Controller
 
     public function undobutton(Request $request)
     {
-        
+    
         $match_id = $request->match_id;
 
         $match_history = MatchHistory::where('match_id', $match_id)->latest()->first();
@@ -1484,7 +1484,7 @@ class MatchInformationController extends Controller
 
 
 
-         return response()->json([
+         return json_encode([
             'message' => 'Undo Done',
             'success' => true
          ]);
@@ -1506,7 +1506,7 @@ class MatchInformationController extends Controller
 
         $match->save();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Strick changed'
         ]);
@@ -1519,7 +1519,7 @@ class MatchInformationController extends Controller
 
         $teamplayer = TeamPlayer::select('id','player_id')->whereIn('team_id', [$team_1, $team_2])->with('player')->get();
 
-        return response()->json([
+        return json_encode([
             'success' => true,
             'message' => 'Team Players',
             'date' => $teamplayer
@@ -1533,7 +1533,7 @@ class MatchInformationController extends Controller
         $match_info->player_of_the_match = $request->player_id;
         $match_info->save();
 
-        return response()->json([
+        return json_encode([
             'message' => 'player og the match Selected',
             'success' => true
         ]);
