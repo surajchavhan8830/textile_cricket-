@@ -1426,6 +1426,7 @@ class MatchInformationController extends Controller
 
     public function undobutton(Request $request)
     {
+        
         $match_id = $request->match_id;
 
         $match_history = MatchHistory::where('match_id', $match_id)->latest()->first();
