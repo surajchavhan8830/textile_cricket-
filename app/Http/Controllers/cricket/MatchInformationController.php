@@ -439,9 +439,7 @@ class MatchInformationController extends Controller
         // --- --- --- UPDATE BOWLER SUMMARY 
 
 
-        // $is_normal_ball_delivery
-        // $is_extra_ball_delivery
-        // !empty($request->out_type)
+      
         if ($request->run % 2 == 1) {
             $match_info = MatchInformation::find($request->match_ids);
             $match_info->sticker_player_id = $request->nonsticker_player_id;
@@ -449,15 +447,7 @@ class MatchInformationController extends Controller
             $match_info->save();
         }
 
-        // TODO: CHECK IF RUNOUT STRICK / NONSTRICK
-        // if ($request->run == 2 && $request->out_type == "runout");       // TODO: NEED TO CHECK....
-        // { 
-        //     $match_info = MatchInformation::find($request->match_ids);   
-        //     $match_info->sticker_player_id =  $request->sticker_player_id;
-        //     $match_info->nonsticker_player_id = $request->nonsticker_player_id;
-        //     $match_info->save();
-        // }
-
+       
 
         return json_encode([
             'success' => true,
@@ -733,7 +723,7 @@ class MatchInformationController extends Controller
             ->first();
         
         if ($matchinfo->player_of_the_match) {
-            $player_of_match_team = TeamPlayer::select('id', 'player_id', 'team_id')->with('team')->where('player_id', $matchinfo->playerofthematch->id)->first();
+            $player_of_match_team = TeamPlayer::select('id', 'player_id', 'team_id')->with('team')->where('tournament_id', $id)->where('player_id', $matchinfo->playerofthematch->id)->first();
             $matchinfo->player_of_the_match_team = $player_of_match_team->team->short_name;
         } else{
             $matchinfo->player_of_the_match_team = null;
@@ -1142,6 +1132,14 @@ class MatchInformationController extends Controller
             ->get();
 
 
+            // $ex = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get()->sum('is_extra');
+            // $run = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)
+            // ->where('no_ball_type',"legbyes")->where('no_ball_type', "byes")->get()->sum('is_extra');
+
+            $wb_run = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get();
+
+            $wb_run_extra = $wb_run->sum('is_extra');
+            $wbrun = $wb_run->sum('run');
 
 
         $wbCount = strval(MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get()->sum('is_extra'));
@@ -1170,7 +1168,7 @@ class MatchInformationController extends Controller
 
 
 
-        return json_encode([
+        return response()->json([
             'success' => true,
             'message' => 'Match information',
             'data' => $matchinfo,
@@ -1395,13 +1393,12 @@ class MatchInformationController extends Controller
         $match_history->out_by_player_id_s = $stricker_player->out_by_player_id;
         $match_history->out_by_bowler_id_s = $stricker_player->out_by_bowler_id;
 
-
         // Match Batsmen nonstricker
         $match_history->batsman_runs_n = $nonstricker_player->run;
         $match_history->batsman_balls_n = $nonstricker_player->balls;
         $match_history->sixers_n = $nonstricker_player->sixers;
         $match_history->fours_n = $nonstricker_player->fours;
-        $match_history->type_out_n = $nonstricker_player->type_out;
+        $match_history->type_out_n = "fsdfsdf";
         $match_history->out_by_player_id_n = $nonstricker_player->out_by_player_id;
         $match_history->out_by_bowler_id_n = $nonstricker_player->out_by_bowler_id;
 
@@ -1432,6 +1429,12 @@ class MatchInformationController extends Controller
         $match_history = MatchHistory::where('match_id', $match_id)->latest()->first();
 
         $match_info = MatchInformation::where('id', $match_history->match_id)->latest()->first();
+
+        // if($match_history->type_out_s != null &&  $match_history->type_out_n != null)
+        // {
+        //     return;
+        // }
+
         // $match_info->id             = $match_history->match_id;
         // $match_info->id              = $match_history->team_1;
         // $match_info->tournament_id        = $match_history->tournament_id;
