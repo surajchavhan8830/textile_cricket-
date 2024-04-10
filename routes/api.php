@@ -158,8 +158,15 @@ Route::post('declare_result',[MatchInformationController::class, 'declareResult'
 Route::post('matchinfo/{id}', [MatchInformationController::class, 'matchinfo'])->name('matchinfo');
 Route::post('breakreason', [MatchInformationController::class, 'breakreason'])->name('breakreason');
 Route::post('match_status_up', [MatchInformationController::class, 'match_status_up'])->name('match_status_up');
+
+// ADD & EDIT NEW BATSMAN 
 Route::post('newbatsman',[MatchInformationController::class, 'newbatsman'])->name('newbatsman');
+Route::post('edit_new_bats_man',[MatchInformationController::class, 'editnewbatsman'])->name('editnewbatsman');
+
+// ADD & EDIT NEW BOWLER
 Route::post('newbowler',[MatchInformationController::class, 'newbowler'])->name('newbowler');
+Route::post('edit_new_bowler',[MatchInformationController::class, 'editnewbowler'])->name('editnewbowler');
+
 Route::post('cricket_status_update',[MatchInformationController::class, 'cricket_status_update'])->name('cricket_status_update');
 Route::post('scorecard/{id}', [MatchInformationController::class, 'scorecard'])->name('scorecard');
 Route::post('ballbyball/{id}', [MatchInformationController::class, 'ballbyball'])->name('scorecard');

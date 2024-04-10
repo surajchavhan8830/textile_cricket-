@@ -117,11 +117,13 @@ class MatchInformation extends Model
     return $this->belongsTo(MatchBowler::class, 'bowler_id', 'player_id');
   }
 
+  // TODO: CHECK JOIN
   public function bowlerScorePlayer()
   {
     return $this->belongsTo(Player::class, 'out_by_player_id', 'id')->select('id', 'player_name');
   }
 
+  // TODO: CHECK JOIN
   public function player_out()
   {
     return $this->belongsTo(MatchOver::class, 'player_id', 'id');

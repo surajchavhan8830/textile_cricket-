@@ -9,6 +9,7 @@ use App\Models\Sechedule;
 use App\Models\MatchBatsman;
 use App\Models\MatchBowler;
 use App\Models\MatchHistory;
+use App\Models\Player;
 use App\Models\Team;
 use App\Models\TeamPlayer;
 use Carbon\Carbon;
@@ -262,11 +263,11 @@ class MatchInformationController extends Controller
             $team_run = 0;
         }
         if ($request->ball_type == "wb") {
-            
-            if ($request->out_type == "stumped" || $request->out_type == "hitwicket" ) {
+
+            if ($request->out_type == "stumped" || $request->out_type == "hitwicket") {
                 $request->run = 0;
             }
-            
+
             $is_extra_ball_delivery = true;
             $matchover->is_extra = 1;
 
@@ -439,7 +440,7 @@ class MatchInformationController extends Controller
         // --- --- --- UPDATE BOWLER SUMMARY 
 
 
-      
+
         if ($request->run % 2 == 1) {
             $match_info = MatchInformation::find($request->match_ids);
             $match_info->sticker_player_id = $request->nonsticker_player_id;
@@ -447,7 +448,7 @@ class MatchInformationController extends Controller
             $match_info->save();
         }
 
-       
+
 
         return json_encode([
             'success' => true,
@@ -509,6 +510,44 @@ class MatchInformationController extends Controller
         ]);
     }
 
+    // STEP:4.1.1 EDIT CHANGE BETSMAN
+
+    public function editnewbatsman(Request $request)
+    {
+
+        $match_id = $request->match_id;
+        $batsman = MatchBatsman::where('match_id', $match_id)->latest()->first();
+         
+        $match = MatchInformation::find($match_id);
+        $match_over = MatchOver::where('match_ids', $match_id)
+            ->where('sticker_player_id', $batsman->player_id)
+            ->OrWhere('nonsticker_player_id')->first();
+        if (is_null($match_over)) {
+            // dd($match->sticker_player_id);
+            if ($batsman->player_id == $match->sticker_player_id) {
+                $match->sticker_player_id = $request->new_player_id;
+            } else {
+                $match->nonsticker_player_id = $request->new_player_id;
+            }
+
+            $batsman->player_id = $request->new_player_id;
+
+            $batsman->save();
+            $match->save();
+
+            return response()->json([
+                'message' => "Batsman changed successfully",
+                'success' => true,  
+                
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'You can not change batsman now',
+                'success' => false
+            ]);
+        };
+    }
+
     // STEP:4.2 COMPLTE OVER -- NEW OVER
     public function newbowler(Request $request)
     {
@@ -536,6 +575,37 @@ class MatchInformationController extends Controller
             'success' => true,
             'message' => 'New Bowler Added'
         ]);
+    }
+
+    public function editnewbowler(Request $request)
+    {
+        $match_id = $request->match_id;
+        $bowler = MatchBowler::where('match_id', $match_id)->latest()->first();
+        // dd($bowler);
+        $match = MatchInformation::find($match_id);
+
+        $match_over = MatchOver::where('match_ids', $match_id)
+            ->where('bowler_player_id', $bowler->player_id)->latest()->first();
+
+            if(is_null($match_over)){
+
+               $match->bowler_id = $request->new_player_id;
+               $bowler->player_id = $request->new_player_id;
+
+               $match->save();
+               $bowler->save();
+
+               return response()->json([
+                'message' => "Bowler changed successfully",
+                'success' => true
+            ]);
+    
+            }else{
+                return response()->json([
+                    'message' => 'You can not change batsman now',
+                    'success' => false
+                ]); 
+            }
     }
 
 
@@ -721,11 +791,11 @@ class MatchInformationController extends Controller
                 'playerofthematch'
             )
             ->first();
-        
+
         if ($matchinfo->player_of_the_match) {
             $player_of_match_team = TeamPlayer::select('id', 'player_id', 'team_id')->with('team')->where('tournament_id', $id)->where('player_id', $matchinfo->playerofthematch->id)->first();
             $matchinfo->player_of_the_match_team = $player_of_match_team->team->short_name;
-        } else{
+        } else {
             $matchinfo->player_of_the_match_team = null;
         }
 
@@ -1075,7 +1145,7 @@ class MatchInformationController extends Controller
         /* ------------------------------------------ */
 
 
-        return json_encode([
+        return response()->json([
             'success' => true,
             'message' => 'Match information',
             'data' => $matchinfo,
@@ -1132,14 +1202,14 @@ class MatchInformationController extends Controller
             ->get();
 
 
-            // $ex = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get()->sum('is_extra');
-            // $run = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)
-            // ->where('no_ball_type',"legbyes")->where('no_ball_type', "byes")->get()->sum('is_extra');
+        // $ex = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get()->sum('is_extra');
+        // $run = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)
+        // ->where('no_ball_type',"legbyes")->where('no_ball_type', "byes")->get()->sum('is_extra');
 
-            $wb_run = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get();
+        $wb_run = MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get();
 
-            $wb_run_extra = $wb_run->sum('is_extra');
-            $wbrun = $wb_run->sum('run');
+        $wb_run_extra = $wb_run->sum('is_extra');
+        $wbrun = $wb_run->sum('run');
 
 
         $wbCount = strval(MatchOver::select('run', 'ball_type', 'no_ball_type', 'is_extra')->where('match_ids', $match_id)->where('team_id', $team_id)->where('is_extra', 1)->where('ball_type', "wb")->get()->sum('is_extra'));
@@ -1232,13 +1302,18 @@ class MatchInformationController extends Controller
             # code...
 
             $total_run = 0;
-            $balls = MatchOver::select('ball_number',  'team_id', 'run', 'ball_type', 'out_type', 'is_extra')->where('match_ids', $match_id)
+            $balls = MatchOver::select('ball_number',  'team_id', 'run', 'ball_type', 'out_type', 'is_extra', 'bowler_player_id')->where('match_ids', $match_id)
                 // ->join('team', 'team.id', '=', 'match_overs.team_id')
                 ->where('over_number', '=', $over_index)
                 ->where('team_id', '=', $first_team_id)
                 // ->where('bowler_player_id', $bowler_id)
                 ->get();
 
+                $bowler_id = $balls->first()->bowler_player_id;
+                $palyer = Player::where('id', $bowler_id)->select('id', 'player_name', 'nickname')->first()->toArray();
+// dd($$palyer);
+
+                // dd($balls);
             // $team = Team::find($balls->team_id);                
             $over_by_run = $balls->sum('run');
             $over_by_extra = $balls->sum('is_extra');
@@ -1247,7 +1322,8 @@ class MatchInformationController extends Controller
             $over_list[$over_index] = array(
                 'over_name' => 'Over ' . ($over_index + 1),
                 'balls' => $balls->toArray(),
-                'total_run' => $total_run
+                'total_run' => $total_run,
+                'bowler' => $palyer
             );
         }
 
@@ -1277,7 +1353,7 @@ class MatchInformationController extends Controller
         $first_team = Team::find($first_team_id);
         $second_team = Team::find($second_team_id);
 
-        return json_encode([
+        return response()->json([
             'success' => true,
             'message' => 'Ball by Ball Overs',
             'data' => $over_list,
@@ -1423,7 +1499,7 @@ class MatchInformationController extends Controller
 
     public function undobutton(Request $request)
     {
-    
+
         $match_id = $request->match_id;
 
         $match_history = MatchHistory::where('match_id', $match_id)->latest()->first();
@@ -1472,28 +1548,25 @@ class MatchInformationController extends Controller
         $nonstricker_player->out_by_bowler_id = $match_history->out_by_bowler_id_n;
         $nonstricker_player->save();
 
-         $bowler_player = MatchBowler::where('match_id', $match_id)->where('player_id', $match_history->bowler_id)->first();
-         $bowler_player->overs        = $match_history->overs;
-         $bowler_player->runs         = $match_history->bowler_runs;
-         $bowler_player->maiden_over  = $match_history->maiden_over;
-         $bowler_player->wickets      = $match_history->wickets;
-         $bowler_player->save();
+        $bowler_player = MatchBowler::where('match_id', $match_id)->where('player_id', $match_history->bowler_id)->first();
+        $bowler_player->overs        = $match_history->overs;
+        $bowler_player->runs         = $match_history->bowler_runs;
+        $bowler_player->maiden_over  = $match_history->maiden_over;
+        $bowler_player->wickets      = $match_history->wickets;
+        $bowler_player->save();
 
 
-          MatchHistory::where('id', $match_history->id)->delete();
+        MatchHistory::where('id', $match_history->id)->delete();
 
 
-          Matchover::where('id', $match_history->match_over_id)->delete();
+        Matchover::where('id', $match_history->match_over_id)->delete();
 
 
 
-         return json_encode([
+        return json_encode([
             'message' => 'Undo Done',
             'success' => true
-         ]);
- 
-
-
+        ]);
     }
 
     public function strickchange(Request $request)
@@ -1514,13 +1587,13 @@ class MatchInformationController extends Controller
             'message' => 'Strick changed'
         ]);
     }
-    
+
     public function bothTeamPlayer(Request $request)
     {
         $team_1 = $request->team_1;
         $team_2 = $request->team_2;
 
-        $teamplayer = TeamPlayer::select('id','player_id')->whereIn('team_id', [$team_1, $team_2])->with('player')->get();
+        $teamplayer = TeamPlayer::select('id', 'player_id')->whereIn('team_id', [$team_1, $team_2])->with('player')->get();
 
         return json_encode([
             'success' => true,
@@ -1528,7 +1601,7 @@ class MatchInformationController extends Controller
             'date' => $teamplayer
         ]);
     }
-    
+
     public function declarePlayerOfTheMatch(Request $request)
     {
         $match_id = $request->match_id;

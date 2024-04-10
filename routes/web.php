@@ -98,11 +98,6 @@ Route::middleware(['security'])->group(function () {
     // Packagelist
     Route::resource('packagelist', PackageController::class);
     Route::get('users_package/{id}', [PackageController::class, 'user_package'])->name('packagelist.user_package');
-
-
-
-
-
 });
 
 Route::get('admin_login', [UserController::class, 'admin_login'])->name('admin_login');
@@ -114,16 +109,16 @@ Route::get('user_customer', [UserController::class, 'user_customer'])->name('use
 Route::get('inactive', [UserController::class, 'inactive'])->name('inactive');
 
 // Route for user view
- Route::get('user_package', [UserController::class, 'user_package'])->name('user_package');
- Route::get('users_package/{id}', [UserController::class, 'user_pack'])->name('package_single');
- Route::get('create_package/{id}', [UserController::class, 'create_package'])->name('create_package');
-  Route::get('edit_package/{id}', [UserController::class, 'edit_package'])->name('edit_package');
- Route::post('store_package', [UserController::class, 'store_package'])->name('store_package');
-  Route::post('update_package/{id}', [UserController::class, 'update_package'])->name('update_package');
+Route::get('user_package', [UserController::class, 'user_package'])->name('user_package');
+Route::get('users_package/{id}', [UserController::class, 'user_pack'])->name('package_single');
+Route::get('create_package/{id}', [UserController::class, 'create_package'])->name('create_package');
+Route::get('edit_package/{id}', [UserController::class, 'edit_package'])->name('edit_package');
+Route::post('store_package', [UserController::class, 'store_package'])->name('store_package');
+Route::post('update_package/{id}', [UserController::class, 'update_package'])->name('update_package');
 
 
 
- Route::get('/logoutadmin', function () {
+Route::get('/logoutadmin', function () {
     if (session()->has('name')) {
         // session()->pull('name');
         session()->forget('name');

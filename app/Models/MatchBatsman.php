@@ -76,7 +76,7 @@ class MatchBatsman extends Model
         }
         return $text;
   
-        return $this->belongsTo(Player::class, 'out_by_player_id', 'id');
+        // return $this->belongsTo(Player::class, 'out_by_player_id', 'id');
     }
 
 }

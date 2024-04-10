@@ -66,6 +66,7 @@ class Team extends Model
                     'team_2_point',
                     'won_team_id',
                     'inning_id');
+                    // ;
     }
     
     public function getTotalCountAttribute()

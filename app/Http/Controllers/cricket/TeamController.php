@@ -124,26 +124,26 @@ class TeamController extends Controller
         $team_A = Team::where('tournament_id', $id)
             ->where('is_delete', 1)
             ->where('group_id', "Group 1")
-            ->with('user', 'teamplaye', 'team_1')->get();
+            ->with('user', 'teamplaye', 'team_1')->OrderBy('point', 'desc')->get();
 
         $team_B = Team::where('tournament_id', $id)
             ->where('is_delete', 1)
             ->where('group_id', "Group 2")
-            ->with('user', 'teamplaye')->get();
+            ->with('user', 'teamplaye')->OrderBy('point', 'desc')->get();
 
         $team_C = Team::where('tournament_id', $id)
             ->where('is_delete', 1)
             ->where('group_id', "Group 3")
-            ->with('user', 'teamplaye')->get();
+            ->with('user', 'teamplaye')->OrderBy('point', 'desc')->get();
         $team_D = Team::where('tournament_id', $id)
             ->where('is_delete', 1)
             ->where('group_id', "Group 4")
-            ->with('user', 'teamplaye')->get();
+            ->with('user', 'teamplaye')->OrderBy('point', 'desc')->get();
 
         $ganeral = Team::where('tournament_id', $id)
             ->where('is_delete', 1)
             ->whereNull('group_id')
-            ->with('user', 'teamplaye', 'team_1')->get();
+            ->with('user', 'teamplaye', 'team_1')->OrderBy('point', 'desc')->get();
 
 
 

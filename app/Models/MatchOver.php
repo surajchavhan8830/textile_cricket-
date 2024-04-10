@@ -17,6 +17,11 @@ class MatchOver extends Model
         return $this->belongsTo(Player::class, 'out_by_player_id', 'id');
     }
     
+    public function bowler_player_name()
+    {
+         return $this->belongsTo(Player::class, 'bowler_player_id', 'id')->select('id', 'player_name');
+    }
+
     public function getBallTagAttribute() 
     {
         $is_wicket = (empty($this->out_type) == false) ? 'W' : '';

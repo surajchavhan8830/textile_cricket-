@@ -514,6 +514,10 @@ class MatchInformationController extends Controller
             'message' => 'Player Added'
         ]);
     }
+    // STEP:4.1.0 change BETSMAN
+
+   
+
 
     // STEP:4.2 COMPLTE OVER -- NEW OVER
     public function newbowler(Request $request)
